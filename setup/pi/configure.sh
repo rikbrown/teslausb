@@ -346,6 +346,30 @@ function install_push_message_scripts() {
     get_script "$install_path" send_sns.py run
 }
 
+function setup_rik_tweaks() {
+    log_progress "Making Rik tweaks"
+
+        # apt-gets
+    log_progress "(Rik) installing additional apps"
+    apt-get -y install vim autossh
+
+    # installs
+    log_progress "(Rik) getting additional scripts"
+    local install_path="$1/rik"
+    mkdir -p "$install_path"
+    get_script "$install_path" rc.local.rik.sh run/rik
+    get_script "$install_path" detect-network-change.sh run/rik
+    get_script "$install_path" on-network-change.sh run/rik
+    get_script "$install_path" test-rsync.sh run/rik
+
+    # rc.local
+    log_progress "(Rik) tweaking rc.local"
+    cat /etc/rc.local | grep -v "exit 0" > /tmp/rc.local
+    echo "$install_path/rc.local.rik.sh" >> /tmp/rc.local
+    echo "exit 0" >> /tmp/rc.local
+    cp /tmp/rc.local /etc/rc.local
+}
+
 # shellcheck disable=SC2046
 if ! [ $(id -u) = 0 ]
 then
@@ -376,3 +400,5 @@ install_archive_scripts /root/bin "$archive_module"
 /tmp/verify-and-configure-archive.sh
 
 install_rc_local /root/bin
+
+setup_rik_tweaks /root/bin
