@@ -361,6 +361,7 @@ function setup_rik_tweaks() {
     get_script "$install_path" detect-network-change.sh run/rik
     get_script "$install_path" on-network-change.sh run/rik
     get_script "$install_path" test-rsync.sh run/rik
+    get_script "$install_path" complete-setup.sh run/rik
 
     # rc.local
     log_progress "(Rik) tweaking rc.local"
